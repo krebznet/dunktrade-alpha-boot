@@ -8,7 +8,12 @@ public class BootApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BootApplication.class, args);
-		System.out.println("Hello Word!");
+		System.out.println("Lets add a breakpoint!!");
+		int i = 0; 
+		if(0 == 0) { 
+			System.out.println("stop here at breakpoint!");
+		}
+		System.out.println("Hello China!");
 	}
 	
 
