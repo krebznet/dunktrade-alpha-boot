@@ -8,12 +8,12 @@ public class BootApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BootApplication.class, args);
-		// lets test some code here with the 
+		// lets test some code here with the
 		// debugger in eclipse
-		
+
 		// create a infinite loop
-		int counter = 0; 
-		while(true) { 
+		int counter = 0;
+		while (true) {
 			System.out.println("Loop Count " + counter);
 			counter++;
 			try {
@@ -22,9 +22,5 @@ public class BootApplication {
 				// TODO: handle exception
 			}
 		}
-		
 	}
-	
-
 }
-
