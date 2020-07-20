@@ -1,10 +1,10 @@
-package com.dunktrade.boot;
+package com.logging.belieforeverfluentd;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BootApplicationTests {
+class ApplicationTests {
 
 	@Test
 	void contextLoads() {
