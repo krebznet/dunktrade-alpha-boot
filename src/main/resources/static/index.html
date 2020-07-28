@@ -1,53 +1,91 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Hello WebSocket</title>
-    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/main.css" rel="stylesheet">
-    <script src="/webjars/jquery/jquery.min.js"></script>
-    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
-    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="/app.js"></script>
-</head>
-<body>
-<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
-    enabled. Please enable
-    Javascript and reload this page!</h2></noscript>
-<div id="main-content" class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                    <label for="connect">WebSocket connection:</label>
-                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
-                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
-                    </button>
-                </div>
-            </form>
-        </div>
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                    <label for="name">What is your name?</label>
-                    <input type="text" id="name" class="form-control" placeholder="Your name here...">
-                </div>
-                <button id="send" class="btn btn-default" type="submit">Send</button>
-            </form>
-        </div>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>websocket</title>
+    <script src="js/jquery.js"></script>
+    <script src="js/sockjs.min.js"></script>
+    <script src="js/stomp.js"></script>
+  </head>
+  <body>
+    <div>
+      <button id="connect">connect</button>
+      <button id="disconnect" disabled="disabled">disconnect</button>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <table id="conversation" class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Greetings</th>
-                </tr>
-                </thead>
-                <tbody id="greetings">
-                </tbody>
-            </table>
-        </div>
+    <div>
+      <h3>broadcast mode</h3>
+      <button id="broadcastButton">send</button>
+      <input id="broadcastText" type="text" />
+      <label>message：</label>
+      <input id="broadcastMsg" type="text" disabled="disabled" />
     </div>
-</div>
-</body>
+    <div>
+      <h3>subscribe mode</h3>
+      <label>message：</label>
+      <input id="subscribeMsg" type="text" disabled="disabled" />
+    </div>
+    <div>
+      <h3>backend</h3>
+      <button id="appButton">send</button><input id="appText" type="text" />
+      <label>message：</label>
+      <input id="appMsg" type="text" disabled="disabled" />
+    </div>
+  </body>
+  <script>
+    var stomp = null;
+    $("#connect").click(function () {
+      var url = "http://localhost:8080/websocket";
+      var socket = new SockJS(url);
+      stomp = Stomp.over(socket);
+
+      // connect and receive messages
+      stomp.connect({}, function (frame) {
+        // broadcast
+        stomp.subscribe("/topic/broadcast", function (res) {
+          $("#broadcastMsg").val(res.body);
+        });
+
+        // subscribe
+        stomp.subscribe("/backend/subscribe/1", function (res) {
+          $("#subscribeMsg").val(res.body);
+        });
+
+        // backend
+        stomp.subscribe("/topic/backend", function (res) {
+          $("#appMsg").val(res.body);
+        });
+        setConnect(true);
+      });
+    });
+
+    // disconnect
+    $("#disconnect").click(function () {
+      if (stomp != null) {
+        stomp.disconnect();
+      }
+      setConnect(false);
+    });
+    function setConnect(connectStatus) {
+      $("#connect").attr("disabled", connectStatus);
+      $("#disconnect").attr("disabled", !connectStatus);
+    }
+
+    // send broadcast message
+    $("#broadcastButton").click(function () {
+      stomp.send(
+        "/backend/broadcast",
+        {},
+        JSON.stringify({ body: $("#broadcastText").val() })
+      );
+    });
+
+    // send message
+    $("#appButton").click(function () {
+      stomp.send(
+        "/topic/backend",
+        {},
+        JSON.stringify({ body: $("#appText").val() })
+      );
+    });
+  </script>
 </html>
