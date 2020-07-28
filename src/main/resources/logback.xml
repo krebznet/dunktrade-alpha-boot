@@ -14,15 +14,20 @@
         </encoder>
     </appender>
     <appender name="FLUENT" class="ch.qos.logback.more.appenders.DataFluentAppender">
-        <tag>dunktrade</tag>
+        <tag>dunklog</tag>
         <label>logging</label>
-        <remoteHost>192.168.1.100</remoteHost>
-        <port>24224</port>
+         30001
+        <remoteHost>192.168.5.8</remoteHost>
+        <port>30001</port>
         <additionalField>
             <key>owner</key>
             <value>dunktrade2</value>
         </additionalField>
     </appender>
+    <logger name="ROOT" level="DEBUG">
+      <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FLUENT" />
+    </logger>
     <logger name="fluentd" level="info">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FLUENT" />
